@@ -1,0 +1,36 @@
+{
+  "main": "js/app.js",
+  "scripts": {
+    "watch": "webpack -w",
+    "dev": "webpack-dev-server --devtool eval-source-map --progress --colors --hot --content-base dist",
+    "deploy": "set NODE_ENV=production && webpack -p --config webpack.production.config.js"
+  },
+  "browserify": {
+    "transform": [
+      "babelify",
+      "envify"
+    ]
+  },
+  "dependencies": {
+    "babel-core": "^5.6.1",
+    "babel-loader": "^5.1.4",
+    "moment": "^2.10.6",
+    "nuclear-js": "^1.0.5",
+    "react": "^0.13.3",
+    "react-bootstrap": "^0.24.4",
+    "superagent": "^1.2.0",
+    "underscore": "^1.8.3",
+    "util": "^0.10.3",
+    "validator": "^4.0.2"
+  },
+  "name": "atlascopco-non-MAM-entities",
+  "version": "0.0.1",
+  "description": "Application that allows registering non-productive confirmations without using MAM.",
+  "author": "Erik Meel",
+  "license": "MIT",
+  "devDependencies": {
+    "json-loader": "^0.5.2",
+    "webpack": "^1.10.5",
+    "webpack-dev-server": "^1.10.1"
+  }
+}

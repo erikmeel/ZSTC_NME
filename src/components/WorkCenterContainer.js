@@ -24,6 +24,9 @@ export default React.createClass({
     if (event.target.value.length > 4) {
     	actions.getWorkCenterDetails(event.target.value);
     }
+    else {
+    	actions.setToInitial();
+    }
     if (event.target.value.length === 0) {
       //actions.resetToIntial()
     }
@@ -38,7 +41,7 @@ export default React.createClass({
     
 
     return (
-      <div>
+      <div className="container-fluid">
         { workcenterdiv }
       </div>
     );

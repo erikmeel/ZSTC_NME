@@ -19,7 +19,8 @@ export default React.createClass({
       validWorkCenter: getters.validWorkCenter,
       workcenter: getters.workcenter,
       order: getters.order,
-      confirmations: getters.confirmations
+      sapConfirmations: getters.sapConfirmations,
+      newConfirmations: getters.newConfirmations
     }
   },
   
@@ -48,8 +49,8 @@ export default React.createClass({
 		orderContainer = <NPOrderContainer validWorkCenter={this.state.validWorkCenter} workcenter={this.state.workcenter.toJS()} />
 	}
 	
-	if(this.state.order) {
-		confContainer = <ConfirmationsContainer order={this.state.order.toJS()} confirmations={this.state.confirmations} />
+	if(this.state.validWorkCenter && this.state.order && this.state.order.toJS().orderRead) {
+		confContainer = <ConfirmationsContainer workcenter={this.state.workcenter.toJS()} order={this.state.order.toJS()} confirmations={this.state.confirmations} />
 	}
 	
     

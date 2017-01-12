@@ -14,6 +14,8 @@ import {
   RECEIVE_NPORDER_FAILED,
   RECEIVE_NPCONF_SUCCESS,
   RECEIVE_NPCONF_FAILED,
+  CANCEL_NPCONF_SUCCESS,
+  CANCEL_NPCONF_FAILED,
   SAVE_CONFIRMATIONS_SUCCESS,
   SAVE_CONFIRMATIONS_FAILED
 } from './actionTypes'
@@ -41,7 +43,8 @@ export default {
 	    			}
 	    			else {
 	    				let workcenterList = workcenters;
-	    				//reactor.dispatch(CHOOSE_WORKCENTER, {workcenterList})
+	    				this.setOrderInitial();
+	    				reactor.dispatch(CHOOSE_WORKCENTER, {workcenterList})
 	    			}
 	    		},
 	    		(obj) => {
@@ -49,8 +52,13 @@ export default {
 	   	 });
 	  },
 	  
- setOrderInitial(value) {
-		  reactor.dispatch(SET_NPORDER_INITIAL, { value });
+ setToInitial() {
+		  reactor.dispatch(RECEIVE_WORKCENTER_FAILED);
+	  },
+	  
+ setOrderInitial() {
+		  reactor.dispatch(SET_NPORDER_INITIAL);
+		  reactor.dispatch(RECEIVE_NPCONF_FAILED);
 	  },
 	  
  getOrderDetails(workcenter, orderType) {
@@ -58,6 +66,11 @@ export default {
 		  backend.getOrderDetails( workcenter, orderType,
 				  order => {
 					  reactor.dispatch(RECEIVE_NPORDER_SUCCESS, { order })
+					  let dtNow = new Date()
+					  let dtPreviousMonth = new Date()
+					  dtPreviousMonth.setMonth(dtPreviousMonth.getMonth()-1)
+					  let dtMonth_1 = new Date(dtPreviousMonth.getFullYear(), dtPreviousMonth.getMonth(), 1)
+					  this.getOrderConfirmations(order, dtMonth_1, dtNow)
 				  },
 				  () => {
 					  reactor.dispatch(RECEIVE_NPORDER_FAILED)
@@ -74,14 +87,25 @@ export default {
 				})  
 	  },
 	  
- getOrderConfirmations(orderid, datefrom, dateto) {
-		  backend.getOrderConfirmations(orderid, datefrom, dateto,
+ getOrderConfirmations(order, datefrom, dateto) {
+		  backend.getOrderConfirmations(order, datefrom, dateto,
 				  confirmations => {
-					  reactor.dispatch(RECEIVE_NPCONF_SUCCESS, { confirmations })
+					  reactor.dispatch(RECEIVE_NPCONF_SUCCESS, { order, confirmations })
 				  },
 				  () => {
 					  reactor.dispatch(RECEIVE_NPCONF_FAILED)
 				  })
+	  },
+	  
+cancelOrderConfirmation(workcenter, order, confirmation) {
+		  backend.cancelOrderConfirmation(order, confirmation,
+			  confirmations => {
+				  reactor.dispatch(CANCEL_NPCONF_SUCCESS, { order, confirmations })
+				  this.getOrderDetails(workcenter, "ZSM5");
+			  },
+			  () => {
+				  reactor.dispatch(CANCEL_NPCONF_FAILED)
+			  })
 	  },
 
  resetToIntial() {

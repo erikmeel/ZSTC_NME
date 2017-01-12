@@ -37,7 +37,11 @@ Backend.getWorkCenterDetails = function (workcenter, cb, cb_error) {
 	                  'resp_code': workcenters[i].veran,
 	                  'resp_name': workcenters[i].veran_name,
 	                  'plant': workcenters[i].werks,
-	                  'objid': workcenters[i].objid
+	                  'objid': workcenters[i].objid,
+	                  'begzt': workcenters[i].begzt,
+	                  'endzt': workcenters[i].endzt,
+	                  'pause': workcenters[i].pause,
+	                  'duration': workcenters[i].duration
 	                }
 	             result.push(workcenter);
 	          }
@@ -116,13 +120,14 @@ Backend.saveOrderConfirmations = function (confirmations, orderid, cb, cb_error)
 		})
 };
 
-Backend.getOrderConfirmations = function (orderid, datefrom, dateto, cb, cb_error) {
-	datefrom = 20160101;
-	dateto = 20161231;
+Backend.getOrderConfirmations = function (order, datefrom, dateto, cb, cb_error) {
+	var orderid = order.orderid;
+	var begdat = datefrom.toISOString().substring(0,10).replace(/-/g ,'');
+	var enddat = dateto.toISOString().substring(0,10).replace(/-/g ,'');
 	var j = {
 			'order_no': orderid,
-			'start_date': datefrom,
-		    'end_date': dateto
+			'start_date': begdat,
+		    'end_date': enddat
 		  }
 		  request
 		  	.get(sprintf('%s/%s?%s', BASE_URL, ORDER_ENTITY, SAP_CLIENT))
@@ -139,9 +144,9 @@ Backend.getOrderConfirmations = function (orderid, datefrom, dateto, cb, cb_erro
 			                var order = {
 			                  'orderid': orderid,
 			                  'description': data[i].description,
-			                  'confirmations': data[i].confirmations,
+			                  'sapConfirmations': data[i].confirmations,
 			                }
-			             result = order.confirmations;
+			             result = order.sapConfirmations;
 			          }
 			          
 			          cb(result)
@@ -152,6 +157,36 @@ Backend.getOrderConfirmations = function (orderid, datefrom, dateto, cb, cb_erro
 			      }
 			      else {
 			    	  cb_error(err.message)
+			      }
+			})
+};
+
+Backend.cancelOrderConfirmation = function (order, confirmation, cb, cb_error) {
+	var orderid = order.orderid;
+	var confirmations = [];
+	confirmations.push(confirmation);
+	
+	var j = {
+			'conf_no': confirmations[0].conf_no,
+			'conf_cnt': confirmations[0].conf_cntr,
+			'orderid': orderid
+	}
+	
+	request
+  		.get(sprintf('%s/%s?%s', BASE_URL, ORDER_ENTITY, SAP_CLIENT))
+  		.query({'action': 'CANCEL_CONFIRMATION'})
+  		.query({'json': JSON.stringify(j)})
+  		.accept('json')
+  		.end(function (err, res) {
+			      if (!err && res.body)  {
+			    	var data = res.body[0].model;
+			        var result;
+			                
+			        cb(result)
+			        
+			      }
+			      else {
+			    	  cb_error()
 			      }
 			})
 };

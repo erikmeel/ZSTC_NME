@@ -17,19 +17,13 @@ export default Store({
 	  }
 })
 
-function setOrderInitial(state, { value }) {
+function setOrderInitial(state) {
 	  let s = state
-	  s = s.setIn(['order', 'order'], null)
+	  s = s.setIn(['order'], null)
 	  return s
 }
 
 function receiveOrder(state, { order }) {
-	  //let s = state
-	  //s = s.setIn(['order', 'orderRead'], true)
-	  //s = s.setIn(['order', 'operations'], operations)
-	  //s = s.setIn(['order', 'order'], orderReceived)
-	  //return s
-	  //state.setIn(['order', 'orderRead', true]);
 	  return state.merge({
 		  "operations": order.operations,
 		  "order": order
@@ -42,16 +36,9 @@ function invalidateOrder(state) {
 		  })
 }
 
-function receiveConfirmations(state, { confirmations }) {
-	//state.setIn(['workcenter', 'validWorkCenter', true]);
-return state.merge({
-	"confirmations": confirmations
-})
-}
-
 function invalidateConfirmations(state) {
 	return state.merge({
-		"confirmations": []
+		"newConfirmations": []
 	})
 }
 

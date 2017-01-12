@@ -21,7 +21,8 @@
     "superagent": "^1.2.0",
     "underscore": "^1.8.3",
     "util": "^0.10.3",
-    "validator": "^4.0.2"
+    "validator": "^4.0.2",
+    "react-datetime": "^2.6.2"
   },
   "name": "atlascopco-non-MAM-entities",
   "version": "0.0.1",

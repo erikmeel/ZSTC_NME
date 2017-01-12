@@ -1,8 +1,10 @@
 'use strict';
 
 var React = require('react');
+var moment = require('moment');
+moment.locale('fr');
 
-import { Button, Input, Modal } from 'react-bootstrap'
+import { Grid, Row, Col, Button, Input, Modal } from 'react-bootstrap'
 
 var WorkCenterInfo = React.createClass({
 	propTypes: {
@@ -19,22 +21,44 @@ var WorkCenterInfo = React.createClass({
   },
 
   render: function () {
+  
+  	let workStartTime = moment()
+  	let workEndTime = moment()
+  	let pauseTime = moment()
+  	
+  	workStartTime.set({hour:0,minute:0,second:0})
+  	workEndTime.set({hour:0,minute:0,second:0})
+  	pauseTime.set({hour:0,minute:0,second:0})
+  	 
+  	workStartTime.add(this.props.workcenter.begzt, 'second')
+  	workEndTime.add(this.props.workcenter.endzt, 'second')
+  	pauseTime.add(this.props.workcenter.pause, 'second')
     
     return (
-    <div className="col-lg-12 well">
-    	<div className="col-md-2">
-      		<div className="text-center workcenter-widget">Name <h3>{ this.props.workcenter.name }</h3></div>
-      	</div>
-        <div className="col-md-7 workcenter-widget">
-          	<p className="col-md-4">Work Center: { this.props.workcenter.arbpl }</p>
-          	<p className="col-md-4">Cost Center: { this.props.workcenter.cost_center }</p>
-          	<p className="col-md-4">Responsible: { this.props.workcenter.resp_code } - { this.props.workcenter.resp_name }</p>
-        </div>
-        <div className="col-md-3 workcenter-widget">    
-        	<p className="col-md-6">Valid from: { this.props.workcenter.begin_date }</p>
-        	<p className="col-md-6">Valid to: { this.props.workcenter.end_date }</p>
-        </div>
-      </div>
+    <Grid fluid="1">
+    	<Row  className="show-grid">
+    	<Col md={2} lg={2}>
+      		<div className="text-center workcenter-widget"><h3>{ this.props.workcenter.name }</h3></div>
+      	</Col>
+        <Col md={10} lg={10}>
+        	<Grid fluid="1">
+        		<Row className="workcenter-widget">
+          			<Col md={2} lg={2}>Work Center: { this.props.workcenter.arbpl }</Col>
+          			<Col md={3} lg={3}>Cost Center: { this.props.workcenter.cost_center }</Col>
+          			<Col md={3} lg={3}>Responsible: { this.props.workcenter.resp_code } - { this.props.workcenter.resp_name }</Col>
+          			<Col md={2} lg={2}>Valid from: { this.props.workcenter.begin_date }</Col>
+        			<Col md={2} lg={2}>Valid to: { this.props.workcenter.end_date }</Col>
+          		</Row>
+          		<Row className="workcenter-widget">
+          			<Col md={2} lg={2}>Start time: { workStartTime.toLocaleString().substring(16,21) }</Col>
+          			<Col md={2} lg={2}>End time: { workEndTime.toLocaleString().substring(16,21) }</Col>
+          			<Col md={2} lg={2}>Break: { pauseTime.toString().substring(16,21) }</Col>
+          			<Col md={2} lg={2}>Capacity per day: { this.props.workcenter.duration }hr</Col>
+          		</Row>
+          	</Grid>
+        </Col>
+      </Row>
+      </Grid>
     )
   }
 })
@@ -65,14 +89,18 @@ var WorkCenter = React.createClass({
     }
 
     return (
-      <div>
-    	<div>
-        	<Input type="text" placeholder="Work Center" onChange={this.props.onWorkCenterChanged} hasFeedback value={arbpl} />
-      	</div>
-      	<div>
-      		{ workcenterInfo }
-	    </div>
-      </div>	  
+      <Grid fluid="1">
+    	<Row>
+    		<Col md={12} lg={12}>
+        		<Input type="text" placeholder="Work Center" onChange={this.props.onWorkCenterChanged} hasFeedback value={arbpl} />
+        	</Col>
+      	</Row>
+      	<Row>
+      		<Col>
+      			{ workcenterInfo }
+      		</Col>
+	    </Row>
+      </Grid>	  
     );
   }
 });
